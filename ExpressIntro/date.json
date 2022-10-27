@@ -1,0 +1,32 @@
+[
+    {
+        "title": "Learn Vanilla js",
+        "description": "Vanilla js is awesome",
+        "status": "active"
+    },
+    {
+        "title": "Learn React js",
+        "description": "React js is awesome",
+        "status": "active"
+    },
+    {
+        "title": "Learn Next js",
+        "description": "Next js is awesome",
+        "status": "inactive"
+    },
+    {
+        "title": "Learn Node js",
+        "description": "Node js is awesome",
+        "status": "inactive"
+    },
+    {
+        "title": "Learn Mongodb",
+        "description": "Mongodb js is awesome",
+        "status": "active"
+    },
+    {
+        "title": "Learn RabbitMq",
+        "description": "RabbitMq js is awesome",
+        "status": "inactive"
+    }
+]
