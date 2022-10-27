@@ -6,18 +6,28 @@ const Todo = new mongoose.model('Todo', todoSchema);
 
 // GET ALL THE TODOS
 todoRouter.get('/', async (req, res) => {
-	await Todo.find().exec((err, data) => {
+	const handleCallBackFn = (err, data) => {
 		if (err) {
 			res.status(500).json({
-				error: 'There is server side error',
+				error: 'There was a server side error!',
 			});
 		} else {
 			res.status(200).json({
 				result: data,
-				message: 'Success',
+				message: 'Fetching todos',
 			});
 		}
-	});
+	};
+	await Todo.find({ status: 'active' })
+		.select({
+			_id: 0,
+			__v: 0,
+			date: 0,
+		})
+		.limit(10)
+		.exec((err, data) => handleCallBackFn(err, data));
+	// without method chaining
+	// await Todo.find({}, (err, data) => handleCallBackFn(err, data));
 });
 
 // POST A TODO
@@ -90,6 +100,21 @@ todoRouter.patch('/updateAll', async (req, res) => {
 			}
 		}
 	);
+});
+
+// DELETE TODO
+todoRouter.delete('/:id', async (req, res) => {
+	await Todo.deleteOne({ _id: req.params.id }, (err) => {
+		if (err) {
+			res.status(500).json({
+				error: 'There was a server side error!',
+			});
+		} else {
+			res.status(200).json({
+				message: 'Todo was deleted successfully!',
+			});
+		}
+	});
 });
 
 module.exports = todoRouter;
