@@ -18,7 +18,7 @@ todoRouter.get('/', (req, res) => {
 			});
 		}
 	};
-	Todo.find({ status: 'active' })
+	Todo.find()
 		.select({
 			// _id: 0,
 			__v: 0,
@@ -28,6 +28,64 @@ todoRouter.get('/', (req, res) => {
 		.exec((err, data) => handleCallBackFn(err, data));
 	// without method chaining
 	// await Todo.find({}, (err, data) => handleCallBackFn(err, data));
+});
+
+// GET ACTIVE TODO
+todoRouter.get('/active', async (req, res) => {
+	try {
+		const todo = new Todo();
+		const data = await todo.findActive();
+		res.status(200).json({
+			data,
+		});
+	} catch (err) {
+		res.status(500).json({
+			message: 'There is server side error!',
+		});
+	}
+});
+
+// GET ACTIVE TODO BY CALLBACK
+todoRouter.get('/active-callback', (req, res) => {
+	const todo = new Todo();
+	todo.findActiveCallback((err, data) => {
+		if (err) {
+			res.status(500).json({
+				message: 'There is server side error!',
+			});
+		}
+		res.status(200).json({
+			data,
+		});
+	});
+});
+
+// GET TODOS BY STATIC METHOD
+todoRouter.get('/byStatic', async (req, res) => {
+	try {
+		const data = await Todo.findByJS();
+		res.status(200).json({
+			data,
+		});
+	} catch (error) {
+		res.status(500).json({
+			error,
+		});
+	}
+});
+
+// GET TODOS BY QUERY METHOD
+todoRouter.get('/byQuery', async (req, res) => {
+	try {
+		const data = await Todo.find().byQuery('js');
+		res.status(200).json({
+			data,
+		});
+	} catch (error) {
+		res.status(500).json({
+			error,
+		});
+	}
 });
 
 // GET TODO BY ID
