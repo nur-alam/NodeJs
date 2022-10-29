@@ -1,11 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const checkLogin = require('../middlewares/checkLogin');
 const todoRouter = express.Router();
 const todoSchema = require('../schema/todoSchema');
 const Todo = new mongoose.model('Todo', todoSchema);
 
 // GET ALL THE TODOS
-todoRouter.get('/', (req, res) => {
+todoRouter.get('/', checkLogin, (req, res) => {
 	const handleCallBackFn = (err, data) => {
 		if (err) {
 			res.status(500).json({
