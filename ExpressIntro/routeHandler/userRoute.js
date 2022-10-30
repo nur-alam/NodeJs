@@ -6,6 +6,21 @@ const bcrypt = require('bcrypt');
 const userSchema = require('../schema/userSchema');
 const User = new mongoose.model('User', userSchema);
 
+// GET ALL USERS
+userRouter.get('/all', async (req, res) => {
+	try {
+		const users = await User.find().populate('todos');
+		res.status(200).json({
+			users,
+		});
+	} catch (error) {
+		res.status(500).json({
+			users,
+			error: `There was server side error! ${error}`,
+		});
+	}
+});
+
 // LOGIN
 userRouter.post('/signin', async (req, res) => {
 	try {

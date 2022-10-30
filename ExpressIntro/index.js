@@ -23,7 +23,6 @@ app.use('/todo', todoRouter);
 app.use('/user', userRouter);
 
 app.get('/', (req, res) => {
-	console.log('root route');
 	res.send();
 });
 

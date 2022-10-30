@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const checkLogin = require('../middlewares/checkLogin');
 const todoRouter = express.Router();
 const todoSchema = require('../schema/todoSchema');
+const userSchema = require('../schema/userSchema');
 const Todo = new mongoose.model('Todo', todoSchema);
+const User = new mongoose.model('User', userSchema);
 
 // GET ALL THE TODOS
 todoRouter.get('/', checkLogin, (req, res) => {
@@ -20,6 +22,7 @@ todoRouter.get('/', checkLogin, (req, res) => {
 		}
 	};
 	Todo.find()
+		.populate('user')
 		.select({
 			// _id: 0,
 			__v: 0,
@@ -119,26 +122,50 @@ todoRouter.get('/:id', async (req, res) => {
 });
 
 // POST A TODO
-todoRouter.post('/', (req, res) => {
-	const newTodo = new Todo(req.body);
-	newTodo = newTodo.save((err) => {
-		if (err) {
-			res.status(500).json({ error: 'There was a server side error!' });
-		} else {
-			res.status(200).json({
-				message: 'Todo was inserted successfully!',
-			});
-		}
-	});
+todoRouter.post('/', checkLogin, async (req, res) => {
+	const newTodo = new Todo({ ...req.body, user: req.userId });
+	try {
+		await newTodo.save();
+		await User.updateOne(
+			{
+				_id: req.userId,
+			},
+			{
+				$push: {
+					todos: [newTodo._id],
+				},
+			}
+		);
+		res.status(200).json({
+			message: 'Todo was inserted successfully!',
+		});
+	} catch (error) {
+		res.status(500).json({ error: `There was a server side error! ${error}` });
+	}
 });
 
 // POST MULTIPLE TODO
-todoRouter.post('/all', (req, res) => {
-	Todo.insertMany(req.body, (err) => {
+todoRouter.post('/all', checkLogin, (req, res) => {
+	const newBody = req.body.map((element) => {
+		return { ...element, user: req.userId };
+	});
+	Todo.insertMany(newBody, async (err, data) => {
 		if (err) {
 			res.status(500).json({ error: 'There was a server side error!' });
 		} else {
+			$todoIds = [...data].map((element) => element._id);
+			await User.updateOne(
+				{
+					_id: req.userId,
+				},
+				{
+					$push: {
+						todos: [...$todoIds],
+					},
+				}
+			);
 			res.status(200).json({
+				data,
 				message: 'Todos were inserted successfully!',
 			});
 		}
@@ -190,12 +217,27 @@ todoRouter.patch('/updateAll', (req, res) => {
 	);
 });
 
+// DELETE ALL
+todoRouter.delete('/deleteAll', (req, res) => {
+	Todo.deleteMany({}, (err) => {
+		if (err) {
+			res.status(500).json({
+				error: `There was a server side errorsdfdf! ${err}`,
+			});
+		} else {
+			res.status(200).json({
+				message: 'All Todo was deleted successfully!',
+			});
+		}
+	});
+});
+
 // DELETE TODO
 todoRouter.delete('/:id', (req, res) => {
 	Todo.deleteOne({ _id: req.params.id }, (err) => {
 		if (err) {
 			res.status(500).json({
-				error: 'There was a server side error!',
+				error: `There was a server side error! ${err}`,
 			});
 		} else {
 			res.status(200).json({
