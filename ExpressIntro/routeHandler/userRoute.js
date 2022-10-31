@@ -15,7 +15,6 @@ userRouter.get('/all', async (req, res) => {
 		});
 	} catch (error) {
 		res.status(500).json({
-			users,
 			error: `There was server side error! ${error}`,
 		});
 	}

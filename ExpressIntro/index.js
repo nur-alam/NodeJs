@@ -30,8 +30,13 @@ app.get('/', (req, res) => {
 const errorHandler = (err, req, res, next) => {
 	if (res.headersSent) {
 		return next(err);
+	} else {
+		if (res?.message) {
+			res.status(500).json({ edrror: err });
+		} else {
+			res.send(`There was an error! ${err}`);
+		}
 	}
-	res.status(500).json({ error: err });
 };
 
 app.use(errorHandler);
