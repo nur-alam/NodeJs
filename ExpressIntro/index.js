@@ -34,7 +34,7 @@ const errorHandler = (err, req, res, next) => {
 		if (res?.message) {
 			res.status(500).json({ edrror: err });
 		} else {
-			res.send(`There was an error! ${err}`);
+			res.status(500).send({ error: `There was an error! ${err}` });
 		}
 	}
 };

@@ -14,6 +14,8 @@ userRouter.get('/all', async (req, res) => {
 			users,
 		});
 	} catch (error) {
+		// it's will transfer error to our custom error handler in inde.js file (errorHandler)
+		// req.next(error);
 		res.status(500).json({
 			error: `There was server side error! ${error}`,
 		});
