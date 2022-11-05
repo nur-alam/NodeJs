@@ -7,15 +7,18 @@ const auth = async (req, res, next) => {
 		return next(CustomErrorHandler.unAuthorized());
 	}
 	const token = authHeader.split(' ')[1];
-	const { _id, name, role } = await JwtService.verify(token);
-	const user = {
-		_id,
-		name,
-		role,
-	};
-	req.user = user;
-	console.log('from auth ', req.user);
-	next();
+	try {
+		const { _id, name, role } = await JwtService.verify(token);
+		const user = {
+			_id,
+			name,
+			role,
+		};
+		req.user = user;
+		next();
+	} catch (err) {
+		next(CustomErrorHandler.unAuthorized());
+	}
 };
 
 export default auth;

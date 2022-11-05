@@ -1,8 +1,9 @@
 import Joi, { ValidationError } from 'joi';
-import { User } from '../../models';
+import { User, RefreshToken } from '../../models';
 import CustomErrorHandler from '../../services/CustomErrorHandler';
 import bcrypt from 'bcrypt';
 import JwtService from '../../services/JwtService';
+import { REFRESH_TOKEN } from '../../config';
 
 const registerController = {
 	async register(req, res, next) {
@@ -40,16 +41,23 @@ const registerController = {
 		});
 
 		let access_token;
-
+		let refresh_token;
 		try {
-			const insertedUser = await user.save();
+			const newUser = await user.save();
 			// Token
-			access_token = JwtService.sign({ _id: insertedUser._id, name: insertedUser.name, role: insertedUser.role });
+			access_token = JwtService.sign({ _id: newUser._id, name: newUser.name, role: newUser.role });
+			refresh_token = JwtService.sign(
+				{ _id: newUser._id, name: newUser.name, role: newUser.role },
+				'1y',
+				REFRESH_TOKEN
+			);
+			//database whitelist
+			await refreshToken.create({ token: refresh_token });
 		} catch (err) {
 			return next(err);
 		}
 
-		res.json({ access_token });
+		res.json({ access_token, refresh_token });
 	},
 };
 
