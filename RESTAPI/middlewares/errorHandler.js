@@ -5,7 +5,7 @@ import CustomErrorHandler from '../services/CustomErrorHandler';
 const errorHandler = (err, req, res, next) => {
 	let statusCode = 500;
 	let data = {
-		message: 'Internal server error',
+		message: err,
 		...(DEBUG_MODE === 'true' && { originalError: err.message }),
 	};
 	if (err instanceof ValidationError) {

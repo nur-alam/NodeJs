@@ -40,6 +40,27 @@ const loginController = {
 			next(err);
 		}
 	},
+	async logOut(req, res, next) {
+		//validation
+		const refreshSchema = Joi.object({
+			refresh_token: Joi.string().required(),
+		});
+		const { error } = refreshSchema.validate(req.body);
+		if (error) {
+			return next(error);
+		}
+
+		try {
+			const isDeleted = await RefreshToken.deleteOne({ token: req.body.refresh_token });
+			if (!isDeleted.deletedCount) {
+				return next('deletedCount 0');
+			}
+		} catch (error) {
+			return next(error);
+			// return next(new Error(`${error}`));
+		}
+		res.json({ status: 1 });
+	},
 };
 
 export default loginController;

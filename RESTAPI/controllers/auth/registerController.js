@@ -40,24 +40,24 @@ const registerController = {
 			password: hashedPassword,
 		});
 
-		let access_token;
-		let refresh_token;
+		let accesstoken;
+		let refreshToken;
 		try {
 			const newUser = await user.save();
 			// Token
-			access_token = JwtService.sign({ _id: newUser._id, name: newUser.name, role: newUser.role });
-			refresh_token = JwtService.sign(
+			accesstoken = JwtService.sign({ _id: newUser._id, name: newUser.name, role: newUser.role });
+			refreshToken = JwtService.sign(
 				{ _id: newUser._id, name: newUser.name, role: newUser.role },
 				'1y',
 				REFRESH_TOKEN
 			);
 			//database whitelist
-			await refreshToken.create({ token: refresh_token });
+			await RefreshToken.create({ token: refreshToken });
 		} catch (err) {
 			return next(err);
 		}
 
-		res.json({ access_token, refresh_token });
+		res.json({ accesstoken, refreshToken });
 	},
 };
 
