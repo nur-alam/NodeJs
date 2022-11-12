@@ -7,6 +7,7 @@ import router from './routes';
 
 const app = express();
 app.use(express.json());
+global.appRoot = path.resolve(__dirname);
 
 // mongoose
 // 	.connect(DB_URL, {})
