@@ -19,5 +19,6 @@ router.post('/logout', loginController.logOut);
 router.get('/products/all', auth, productController.all);
 router.post('/products', [auth, adminAuth], productController.store);
 router.put('/product/:id', [auth, adminAuth], productController.update);
+router.delete('/product/:id', [auth, adminAuth], productController.destroy);
 
 export default router;
