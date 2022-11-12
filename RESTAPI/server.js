@@ -22,6 +22,7 @@ db.once('open', () => {
 });
 
 app.use('/api', router);
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
 	console.log('rest api');

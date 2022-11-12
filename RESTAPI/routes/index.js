@@ -16,6 +16,7 @@ router.post('/login', loginController.login);
 router.get('/me', auth, userController.me);
 router.post('/refresh', refreshController.refresh);
 router.post('/logout', loginController.logOut);
+router.get('/product/:id', auth, productController.single);
 router.get('/products/all', auth, productController.all);
 router.post('/products', [auth, adminAuth], productController.store);
 router.put('/product/:id', [auth, adminAuth], productController.update);

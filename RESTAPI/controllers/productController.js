@@ -46,6 +46,15 @@ const handleMultipartData = multer({
 // ]); // 5mb
 
 const productController = {
+	async single(req, res, next) {
+		let product;
+		try {
+			product = await Product.findOne({ _id: req.params.id }).select('');
+		} catch (error) {
+			next(CustomErrorHandler.serverError());
+		}
+		return res.json(product);
+	},
 	async all(req, res, next) {
 		let products;
 		try {
