@@ -49,7 +49,7 @@ const productController = {
 	async all(req, res, next) {
 		try {
 			const products = await Product.find();
-			res.json(products);
+			res.status(201).json(products);
 		} catch (err) {
 			return next(err);
 		}
@@ -112,7 +112,7 @@ const productController = {
 			const { name, price, size } = req.body;
 			let document;
 			try {
-				let prevDocument = await Product.findOne({ _id: req.params.id });
+				const prevDocument = await Product.findOne({ _id: req.params.id });
 				document = await Product.findOneAndUpdate(
 					{ _id: req.params.id },
 					{
