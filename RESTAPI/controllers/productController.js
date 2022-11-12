@@ -6,6 +6,8 @@ import CustomErrorHandler from '../services/CustomErrorHandler';
 import Product from '../models/product';
 import productSchema from '../validators/productValidator';
 
+const fsPromise = fs.promises;
+
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		fs.mkdir('uploads/', (err) => {
@@ -147,13 +149,13 @@ const productController = {
 			return next(new Error('Nothing to delete'));
 		}
 		// image delete
-		const imagePath = document.image;
+		const imagePath = document._doc.image;
 		fs.unlink(`${appRoot}/${imagePath}`, (err) => {
 			if (err) {
-				return next(CustomErrorHandler.serverError());
+				return next(CustomErrorHandler.serverError(err));
 			}
+			res.json(document);
 		});
-		res.json(document);
 	},
 };
 
